@@ -1,4 +1,4 @@
-ARDUINO_BASE			= /data/projects/arduino
+ARDUINO_BASE			= /data1/projects/arduino
 ARDUINO_DIR				= $(ARDUINO_BASE)/arduino-1.6.8
 TARGET                 = qdscope
 MCU                    = atmega328p
@@ -12,3 +12,4 @@ ARDUINO_ETC_PATH       = $(ARDUINO_TOOLS_PATH)/avr/etc
 AVR_TOOLS_PATH         = $(ARDUINO_TOOLS_PATH)/avr/bin
 
 include $(ARDUINO_BASE)/Arduino.make
+#include /usr/share/arduino/Arduino.mk
