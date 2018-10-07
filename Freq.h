@@ -23,6 +23,8 @@
 /* Count the number of pulses on T1 (timer 1 external clock). This is PD5 on the 'nano
 */
 
+/* TCNT1 modes.
+*/
 #define FREQ_TCCR1B_EXT_RISING	0x07
 #define FREQ_TCCR1B_EXT_FALLING	0x06
 
@@ -30,23 +32,12 @@ typedef struct
 {
 	unsigned long accumulator;
 	unsigned lastTcnt1;
+	unsigned long lastTime;
 } Freq_t;
 
 Freq_t Freq;
 
-static inline void Freq_Dump(unsigned millisecs)
-{
-	char buffer[50];
-	unsigned long whole = (unsigned long)( ((unsigned long long)Freq.accumulator * 1000uLL) /
-											(unsigned long long)millisecs );
-	unsigned frac = (unsigned)( ((unsigned long long)Freq.accumulator * 1000uLL) %
-											(unsigned long long)millisecs );
-	sprintf(buffer, "f = %ld.%02d", whole, frac);
-	Serial.println(buffer);
-	Freq.accumulator = 0;
-}
-
-static void Freq_Loop(void)
+static inline void Freq_Loop(void)
 {
 	unsigned tcnt1 = TCNT1;
 
@@ -54,6 +45,38 @@ static void Freq_Loop(void)
 	*/
 	Freq.accumulator += (unsigned long)(tcnt1 - Freq.lastTcnt1);
 	Freq.lastTcnt1 = tcnt1;
+}
+
+static inline void Freq_Dump(void)
+{
+	noInterrupts();
+	unsigned long now = micros();
+	/* Update the accumulator.
+	*/
+	Freq_Loop();
+	interrupts();
+
+	/* Calculate duration of the measurement interval and set the start time for the next interval.
+	*/
+	unsigned long duration = now - Freq.lastTime;
+	Freq.lastTime = now;
+
+	/* Calculate frequency as counts * 1000000 / seconds * 1000000
+	*/
+	double f = ((double)Freq.accumulator * 1000000.0)/((double)duration);
+
+	/* Integer and fractional parts (looks like arduino's sprintf doesn't do %f)
+	*/
+	unsigned whole = (unsigned)f;
+	unsigned frac = (unsigned)((f - (double)whole)*1000.0);
+
+	char buffer[50];
+	sprintf(buffer, "f = %u.%03u", whole, frac);
+	Serial.println(buffer);
+
+	/* Start the whole process again.
+	*/
+	Freq.accumulator = 0;
 }
 
 static inline void Freq_Setup(void)

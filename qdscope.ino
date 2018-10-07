@@ -83,7 +83,7 @@ void loop(void)
 			ledState = 1;
 			digitalWrite(led1, HIGH);
 			PinCapture_Dump();
-			Freq_Dump(2000);
+			Freq_Dump();
 			Serial.println("woo");
 		}
 	}

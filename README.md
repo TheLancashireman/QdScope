@@ -7,6 +7,6 @@ All output is via the serial port - I know it isn't ideal, but I did say it's qu
 Serial output takes a chunk of time during which the capture functions aren't running.
 
 Early version has a 4-channel logic capture - basic logic analyser.
-Coming soon: frequency counter.
+New!: basic frequency counter on pin T1/PD5.
 Later maybe: analog inputs.
 All for low-frequency work. If you want high frequency and/or accuracy, go and buy or borrow some real gear. :-)
