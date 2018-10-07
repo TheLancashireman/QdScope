@@ -18,7 +18,8 @@
  * qdscope is an Arduino sketch, written for an Arduino Nano
 */
 
-#include "PinCapture.h" 
+#include "PinCapture.h"
+#include "Freq.h"
 
 /* Blinkenlight
 */
@@ -40,9 +41,16 @@ void setup(void)
 	Serial.begin(9600);					// Start the serial port.
 	Serial.println("Hello world!");		// ToDo : it'll need a "who are you?" response
 
+	{
+		char buffer[50];
+		sprintf(buffer, "Sizes: %d %d %d %d", sizeof(short), sizeof(int), sizeof(long), sizeof(long long));
+		Serial.println(buffer);
+	}
+
 	then = millis();					// Initialise the time reference.
 
 	PinCapture_Setup();
+	Freq_Setup();
 }
 
 /* loop() - standard Arduino "Background Task"
@@ -75,9 +83,11 @@ void loop(void)
 			ledState = 1;
 			digitalWrite(led1, HIGH);
 			PinCapture_Dump();
+			Freq_Dump(2000);
 			Serial.println("woo");
 		}
 	}
 
 	PinCapture_Loop();
+	Freq_Loop();
 }

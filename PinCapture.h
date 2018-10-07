@@ -21,6 +21,7 @@
 /* Capturing inputs.
  *
  * ToDo: make the number and selection of pins configurable.
+ * Avoid PD5 - it's the ext. timer input for T1 (Freq,h)
 */
 #define NCAP 50
 #define inputPin0	8		// PB0
@@ -75,7 +76,7 @@ static inline void PinCapture_Dump(void)
 	capIndex = 0;
 }
 
-void PinCapture_Loop(void)
+static inline void PinCapture_Loop(void)
 {
 	capture_t newPins = PinCapture_ReadInputs();
 
